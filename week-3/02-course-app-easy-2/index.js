@@ -1,7 +1,38 @@
 const express = require('express');
 const app = express();
-
+const jwt = require('jsonwebtoken');
 app.use(express.json());
+
+const secretkey1 = 'secretSuperstar';
+const secretkey2 = 'chhupaRustam';
+
+const generatejwtadmin = (data)=>{
+  const token = jwt.sign(data, secretkey1, {expiresIn : '1h'});
+  return token;
+}
+
+const generateJwtuser = (data)=>{
+  const token = jwt.sign(data, secretkey2, {expiresIn : '1h'});
+  return token;
+}
+
+const decodejwtadmin = (req,res,next)=>{
+  let data = req.headers.authorization;
+  const token = data.split(' ')[1];
+  jwt.verify(token,secretkey1,(error,user)=>{
+    if(error)res.json('authorization failed');
+    next();
+  })
+}
+const decodejwtuser = (req,res,next)=>{
+  let data = req.headers.authorization;
+  const token = data.split(' ')[1];
+  jwt.verify(token,secretkey2,(error,user)=>{
+    if(error)res.json('authorization failed');
+    next();
+  })
+}
+
 
 let ADMINS = [];
 let USERS = [];
@@ -10,6 +41,7 @@ let COURSES = [];
 // Admin routes
 app.post('/admin/signup', (req, res) => {
   // logic to sign up admin
+  
 });
 
 app.post('/admin/login', (req, res) => {
